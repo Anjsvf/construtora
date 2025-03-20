@@ -37,7 +37,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5000', 'http://localhost:5173'], // Permite ambos os endereços do frontend
+  origin: ['https://construtora-yjlw.onrender.com', 'https://construtora-7qms.onrender.com'], // Permite ambos os endereços do frontend
   credentials: true
 }));
 app.use(morgan('dev'));
