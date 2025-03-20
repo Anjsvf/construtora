@@ -22,10 +22,10 @@ export async function testAuthentication(email: string, password: string): Promi
       },
       body: JSON.stringify({ email, password }),
     });
-    console.log('Authentication successful');
+    console.log('Autenticação bem-sucedida');
     return true;
   } catch (error) {
-    console.error('Authentication failed:', error);
+    console.error('Falha na autenticação:', error);
     return false;
   }
 } 

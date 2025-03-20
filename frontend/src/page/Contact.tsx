@@ -1,7 +1,44 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa'; // Importando o ícone oficial do WhatsApp
 
 export default function Contact() {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+
+  useEffect(() => {
+    if (mapRef.current && !mapInstanceRef.current) {
+      const map = L.map(mapRef.current).setView([-23.563, -46.654], 13);
+      mapInstanceRef.current = map;
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      const defaultIcon = L.icon({
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41]
+      });
+
+      L.marker([-23.563, -46.654], { icon: defaultIcon })
+        .addTo(map)
+        .bindPopup('Aeroporto Internacional de São Paulo/Guarulhos–Governador André Franco Montoron')
+        .openPopup();
+    }
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
@@ -9,6 +46,18 @@ export default function Contact() {
 
   return (
     <div className="bg-gray-50 py-12">
+      {/* Floating WhatsApp Button */}
+      <a
+        href="https://wa.me/551112345678"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-8 left-8 bg-green-600 text-white p-4 rounded-full shadow-lg hover:bg-green-700 transition duration-300 z-50"
+      >
+        {/* Usando o ícone oficial do WhatsApp */}
+        <FaWhatsapp className="h-8 w-8" />
+      </a>
+
+      {/* Restante do código permanece igual */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl">Entre em Contato</h1>
@@ -82,7 +131,7 @@ export default function Contact() {
           <div className="space-y-8">
             <div className="bg-white rounded-lg shadow-lg p-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Informações de Contato</h2>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center">
                   <Phone className="h-6 w-6 text-blue-600 mr-3" />
@@ -104,7 +153,7 @@ export default function Contact() {
                   <MapPin className="h-6 w-6 text-blue-600 mr-3" />
                   <div>
                     <p className="font-medium">Endereço</p>
-                    <p className="text-gray-600">Av. Paulista, 1000 - São Paulo, SP</p>
+                    <p className="text-gray-600">Aeroporto Internacional de São Paulo/Guarulhos–Governador André Franco Montoron</p>
                   </div>
                 </div>
 
@@ -122,9 +171,8 @@ export default function Contact() {
             {/* Map */}
             <div className="bg-white rounded-lg shadow-lg p-8">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Localização</h2>
-              <div className="aspect-w-16 aspect-h-9 bg-gray-200 rounded-lg">
-                {/* Add map integration here */}
-                <div className="w-full h-64 bg-gray-200 rounded-lg"></div>
+              <div className="bg-gray-200 rounded-lg">
+                <div ref={mapRef} className="leaflet-container w-full h-64 rounded-lg" style={{ height: '400px' }}></div>
               </div>
             </div>
           </div>
